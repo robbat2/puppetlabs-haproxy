@@ -75,7 +75,15 @@
 # [*config_validate_cmd*]
 #   Optional. Command used by concat validate_cmd to validate new
 #   config file concat is a valid haproxy config.
-#   Default /usr/sbin/haproxy -f % -c
+#   Default ${haproxy_bin} -f % -c
+#
+# [*haproxy_bin*]
+#   The path to the haproxy binary.
+#   Defaults to '/usr/sbin/haproxy'
+#
+# [*haproxy_systemd_wrapper*]
+#   The path to the haproxy-systemd_wrapper binary.
+#   Defaults to '/usr/sbin/haproxy-systemd-wrapper'
 #
 # === Examples
 #
@@ -108,21 +116,23 @@
 #  }
 #
 class haproxy (
-  $package_ensure      = 'present',
-  $package_name        = $haproxy::params::package_name,
-  $service_ensure      = 'running',
-  $service_manage      = true,
-  $service_options     = $haproxy::params::service_options,
-  $sysconfig_options   = $haproxy::params::sysconfig_options,
-  $global_options      = $haproxy::params::global_options,
-  $defaults_options    = $haproxy::params::defaults_options,
-  $merge_options       = $haproxy::params::merge_options,
-  $restart_command     = undef,
-  $custom_fragment     = undef,
-  $config_dir          = $haproxy::params::config_dir,
-  $config_file         = $haproxy::params::config_file,
-  $manage_config_dir   = $haproxy::params::manage_config_dir,
-  $config_validate_cmd = $haproxy::params::config_validate_cmd,
+  $package_ensure          = 'present',
+  $package_name            = $haproxy::params::package_name,
+  $service_ensure          = 'running',
+  $service_manage          = true,
+  $service_options         = $haproxy::params::service_options,
+  $sysconfig_options       = $haproxy::params::sysconfig_options,
+  $global_options          = $haproxy::params::global_options,
+  $defaults_options        = $haproxy::params::defaults_options,
+  $merge_options           = $haproxy::params::merge_options,
+  $restart_command         = undef,
+  $custom_fragment         = undef,
+  $config_dir              = $haproxy::params::config_dir,
+  $config_file             = $haproxy::params::config_file,
+  $manage_config_dir       = $haproxy::params::manage_config_dir,
+  $config_validate_cmd     = undef,
+  $haproxy_bin             = $haproxy::params::haproxy_bin,
+  $haproxy_systemd_wrapper = $haproxy::params::haproxy_systemd_wrapper,
 
   # Deprecated
   $manage_service   = undef,

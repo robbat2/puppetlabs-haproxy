@@ -66,7 +66,7 @@
 # [*config_validate_cmd*]
 #   Command used by concat validate_cmd to validate new
 #   config file concat is a valid haproxy config.
-#   Default /usr/sbin/haproxy -f % -c
+#   Default ${haproxy_bin} -f % -c
 #
 # === Examples
 #
@@ -153,7 +153,7 @@ define haproxy::instance (
   $merge_options     = $haproxy::params::merge_options,
   $service_options   = $haproxy::params::service_options,
   $sysconfig_options = $haproxy::params::sysconfig_options,
-  $config_validate_cmd = $haproxy::params::config_validate_cmd,
+  $config_validate_cmd = undef,
 ) {
 
   if $service_ensure != true and $service_ensure != false {
@@ -171,6 +171,10 @@ define haproxy::instance (
   $_global_options = pick($global_options, $haproxy::params::global_options)
   $_defaults_options = pick($defaults_options, $haproxy::params::defaults_options)
   validate_hash($_global_options,$_defaults_options)
+
+  $_haproxy_bin = getparam(Class['haproxy'], 'haproxy_bin')
+  $_config_validate_cmd = pick($config_validate_cmd, getparam(Class['haproxy'], 'config_validate_cmd'), "${_haproxy_bin} ${haproxy::params::config_validate_options}")
+  validate_string($_haproxy_bin, $_config_validate_cmd)
 
   # Determine instance_name based on:
   #   single-instance hosts: haproxy
@@ -208,7 +212,7 @@ define haproxy::instance (
     custom_fragment     => $custom_fragment,
     merge_options       => $merge_options,
     package_ensure      => $package_ensure,
-    config_validate_cmd => $config_validate_cmd,
+    config_validate_cmd => $_config_validate_cmd,
   }
   haproxy::install { $title:
     package_name   => $package_name,

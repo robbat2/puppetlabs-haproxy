@@ -48,6 +48,9 @@ define haproxy::instance_service (
     'ensure' => 'present',
   })
 
+  $haproxy_bin = getparam(Class['haproxy'], 'haproxy_bin')
+  $haproxy_systemd_wrapper = getparam(Class['haproxy'], 'haproxy_systemd_wrapper')
+
   # Manage the parent directory.
   ensure_resource('file', $bindir, {
     ensure => directory,
@@ -62,7 +65,7 @@ define haproxy::instance_service (
   # is the binary.
   $haproxy_link = "${bindir}/haproxy-${title}"
   if $haproxy_package == 'haproxy' {
-    $haproxy_target = '/usr/sbin/haproxy'
+    $haproxy_target = $haproxy_bin
   } else {
     $haproxy_target = "/opt/${haproxy_package}/sbin/haproxy"
   }
@@ -95,7 +98,7 @@ define haproxy::instance_service (
       # systemd:
       validate_string($haproxy_unit_template)
       if $haproxy_package == 'haproxy' {
-        $wrapper = '/usr/sbin/haproxy-systemd-wrapper'
+        $wrapper = $haproxy_systemd_wrapper
       } else {
         $wrapper = "/opt/${haproxy_package}/sbin/haproxy-systemd-wrapper"
       }
